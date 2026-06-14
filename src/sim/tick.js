@@ -1,10 +1,17 @@
 import { AIRLINES, COSTS, LIMITS, RATES } from "./constants";
 
-function pickEvent() {
+function pickEvent(tuning) {
+  const weights = tuning?.events || { rush: 0.42, weather: 0.36, security: 0.22 };
   const r = Math.random();
-  if (r < 0.42) return { type: "rush", label: "Ora di punta — ondata di voli in arrivo", ticksLeft: 12 };
-  if (r < 0.78) return { type: "weather", label: "Maltempo — capacità pista ridotta", ticksLeft: 15 };
+  if (r < weights.rush) return { type: "rush", label: "Ora di punta — ondata di voli in arrivo", ticksLeft: 12 };
+  if (r < weights.rush + weights.weather) return { type: "weather", label: "Maltempo — capacità pista ridotta", ticksLeft: 15 };
   return { type: "security", label: "Security alert — processi più lenti", ticksLeft: 10 };
+}
+
+function nextCooldown(tuning) {
+  const min = tuning?.eventCooldownMin ?? 40;
+  const max = tuning?.eventCooldownMax ?? 70;
+  return min + Math.floor(Math.random() * Math.max(1, max - min));
 }
 
 function detectBottleneck({ securityQueue, lanes, clearedPool, flights, gates, runwayLevel, event }) {
@@ -58,19 +65,20 @@ export function tick(s) {
     event = { ...event, ticksLeft: event.ticksLeft - 1 };
     if (event.ticksLeft <= 0) {
       event = null;
-      eventCooldown = 40 + Math.floor(Math.random() * 30);
+      eventCooldown = nextCooldown(s.tuning);
     }
   } else {
     eventCooldown -= 1;
-    if (eventCooldown <= 0) event = pickEvent();
+    if (eventCooldown <= 0) event = pickEvent(s.tuning);
   }
 
   const hours = Math.max(0, Math.floor((minute - 360) / 60));
   let baseInterval = Math.max(5, 11 - hours);
   if (event?.type === "rush") baseInterval = Math.max(3, Math.ceil(baseInterval / 2));
 
-  const paxMin = 50 + hours * 6;
-  const paxMax = 120 + hours * 10;
+  const demandMultiplier = s.tuning?.demandMultiplier ?? 1;
+  const paxMin = Math.max(20, Math.round((50 + hours * 6 + (s.tuning?.paxMinBonus ?? 0)) * demandMultiplier));
+  const paxMax = Math.max(paxMin + 10, Math.round((120 + hours * 10 + (s.tuning?.paxMaxBonus ?? 0)) * demandMultiplier));
 
   flights = flights.map((f) => ({ ...f }));
   nextSpawnIn -= 1;

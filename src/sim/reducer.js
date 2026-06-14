@@ -6,6 +6,8 @@ export function reducer(state, action) {
   switch (action.type) {
     case "TICK":
       return tick(state);
+    case "START_AIRPORT":
+      return initialState(action.airportId);
     case "TOGGLE_PAUSE":
       return { ...state, running: !state.running };
     case "SET_SPEED":
@@ -22,7 +24,7 @@ export function reducer(state, action) {
       return { ...state, money: state.money - cost, runwayLevel: state.runwayLevel + 1 };
     }
     case "RESET":
-      return initialState();
+      return initialState(state.airportId);
     default:
       return state;
   }
