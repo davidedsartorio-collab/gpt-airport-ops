@@ -180,7 +180,7 @@ export function AirportPixiScene({ state }) {
       const uiLayer = new Container();
       scene.addChild(bgLayer, glowLayer, planeLayer, bagLayer, npcLayer, uiLayer);
 
-      const texture = await Assets.load(SCENE.assets.runwayFocus || SCENE.assets.terminalBase);
+      const texture = await Assets.load(SCENE.assets.terminalBase);
       const bg = new Sprite(texture);
       bg.width = SCENE.width;
       bg.height = SCENE.height;
@@ -327,7 +327,7 @@ export function AirportPixiScene({ state }) {
           label.visible = i < s.gates;
         });
         const left = Math.max(0, (s.dayLength || 720) - (s.minute - (s.dayStartMinute || 360)));
-        statusLabel.text = `V12 · ${visible} NPC · ${Math.floor(left / 60)}h ${left % 60}m · ${s.airportName}`;
+        statusLabel.text = `V13 CLEAN BASE · ${visible} NPC · ${Math.floor(left / 60)}h ${left % 60}m · ${s.airportName}`;
       });
     }
 

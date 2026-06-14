@@ -155,7 +155,7 @@ export function LiveOpsScreen({ state, dispatch, onBack }) {
         <section className="play-grid">
           <div className="map-card map-card--gameplay">
             <div className="map-card__head map-card__head--compact">
-              <div><Activity size={14} color={C.teal} /> Vista operativa Pixi</div>
+              <div><Activity size={14} color={C.teal} /> Vista operativa clean map</div>
               <div className="map-card__legend map-card__legend--chips">
                 <span><b className="legend legend--blue" /> passeggeri</span>
                 <span><b className="legend legend--orange" /> attesa</span>
@@ -163,6 +163,14 @@ export function LiveOpsScreen({ state, dispatch, onBack }) {
                 <span><b className="legend legend--bag" /> bagagli</span>
                 <span><b className="legend legend--upgrade" /> missione</span>
               </div>
+            </div>
+            <div className="map-overlay-hud">
+              <span><strong>{eur(state.money)}</strong><small>Cassa</small></span>
+              <span><strong>{Math.round(state.reputation)}%</strong><small>Rep</small></span>
+              <span><strong>{state.throughput.toLocaleString("it-IT")}</strong><small>Pax/h</small></span>
+              <span><strong>{Math.round(state.estWait)}m</strong><small>Attesa</small></span>
+              <span><strong>{stats.onTimePct}%</strong><small>Punt.</small></span>
+              <button onClick={() => setMissionOpen(true)}><Trophy size={13} /> Missione</button>
             </div>
             <TerminalCanvas state={state} />
           </div>
