@@ -1,5 +1,6 @@
 import { Lock, Plane, Play, Star, Trophy } from "lucide-react";
 import { AIRPORTS } from "../data/airportTemplates";
+import { isAirportUnlocked } from "../sim/campaign";
 
 function Difficulty({ level }) {
   return (
@@ -11,7 +12,7 @@ function Difficulty({ level }) {
   );
 }
 
-export function AirportSelectScreen({ onStart }) {
+export function AirportSelectScreen({ campaign, onStart }) {
   return (
     <div className="select-shell">
       <div className="select-bg select-bg--blue" />
@@ -37,21 +38,24 @@ export function AirportSelectScreen({ onStart }) {
             <span>Earth → Ocean → Mars → Orbital</span>
           </div>
           <div className="world-path">
-            {AIRPORTS.map((airport, index) => (
-              <div key={airport.id} className={`world-node world-node--${airport.status}`} style={{ "--node-color": airport.theme.primary }}>
+            {AIRPORTS.map((airport, index) => {
+              const unlocked = isAirportUnlocked(airport.id, campaign);
+              return (
+              <div key={airport.id} className={`world-node world-node--${unlocked ? "unlocked" : "locked"}`} style={{ "--node-color": airport.theme.primary }}>
                 <div className="world-node__orb">
-                  {airport.status === "locked" ? <Lock size={18} /> : <Plane size={18} style={{ transform: "rotate(45deg)" }} />}
+                  {!unlocked ? <Lock size={18} /> : <Plane size={18} style={{ transform: "rotate(45deg)" }} />}
                 </div>
                 {index < AIRPORTS.length - 1 && <div className="world-node__line" />}
                 <span>{airport.shortName}</span>
               </div>
-            ))}
+            );})}
           </div>
         </section>
 
         <section className="airport-grid">
           {AIRPORTS.map((airport) => {
-            const locked = airport.status === "locked";
+            const locked = !isAirportUnlocked(airport.id, campaign);
+            const bestStars = campaign?.stars?.[airport.id] || 0;
             return (
               <article key={airport.id} className={`airport-card ${locked ? "airport-card--locked" : ""}`} style={{ "--airport-primary": airport.theme.primary, "--airport-secondary": airport.theme.secondary, "--airport-floor": airport.theme.floor }}>
                 <div className="airport-card__art">
@@ -67,7 +71,7 @@ export function AirportSelectScreen({ onStart }) {
                 </div>
 
                 <div className="airport-card__body">
-                  <div className="airport-card__world">{airport.world}</div>
+                  <div className="airport-card__world">{airport.world} · best {bestStars}★</div>
                   <div className="airport-card__topline">
                     <h2>{airport.name}</h2>
                     {locked ? <Lock size={16} /> : <Trophy size={16} />}
@@ -85,7 +89,7 @@ export function AirportSelectScreen({ onStart }) {
                   </div>
 
                   <button className="start-airport-btn" disabled={locked} onClick={() => onStart(airport.id)}>
-                    {locked ? airport.unlocks : <><Play size={15} /> Start live ops</>}
+                    {locked ? airport.unlocks : <><Play size={15} /> Avvia missione live</>}
                   </button>
                 </div>
               </article>

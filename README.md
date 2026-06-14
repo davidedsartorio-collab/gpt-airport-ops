@@ -1,14 +1,29 @@
-# Airport Ops Visual v9
+# Airport Ops Visual v12
 
-V9 pushes the next visual zone after the v8 art-kit pass: Security + Gates.
+V12 is a bigger milestone, not a tiny visual pass.
 
-## Highlights
-- more detailed security checkpoint with queue maze, tray belts, X-ray lanes, officers and pulsing warning state
-- each security upgrade now feels more physical: extra visible lane machinery
-- richer airside lounge with sign, seating islands, shop desk and boards
-- improved gate area with premium gate pods, status displays, boarding lights, seat islands, jet bridges and integrated boarding progress
-- keeps v8 improvements for Arrivals and Bag Drop
-- keeps upgrade cards, bottleneck banner, gate cells, mission ticker and zoom-out airport evolution
+## Main changes
+- Keeps the current simulation/reducer architecture clean.
+- Continues the Pixi illustrated-map renderer direction.
+- Switches the live map toward the runway-focused illustrated background.
+- Adds stronger runway lights, taxi movement, multiple planes, and visible mission clock overlay.
+- Adds a real win/fail loop:
+  - the day ends after a fixed duration
+  - structured objectives are evaluated by code
+  - the result awards 0–3 stars
+  - 2 stars unlock the next airport
+  - progress is saved to localStorage
+- Fail states still exist:
+  - bankruptcy
+  - reputation collapse
+
+## New logic files
+- `src/sim/objectives.js`
+- `src/sim/campaign.js`
+
+## Renderer direction
+The final target is still: illustrated map + sprite layers + animation from state.
+This version keeps moving toward that pipeline without touching the core sim model too much.
 
 ## Run
 ```bash

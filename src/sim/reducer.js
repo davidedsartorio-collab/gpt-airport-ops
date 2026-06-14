@@ -11,6 +11,7 @@ export function reducer(state, action) {
     case "TOGGLE_PAUSE":
       return { ...state, running: !state.running };
     case "SET_SPEED":
+      if (state.gameOver || state.missionComplete) return state;
       return { ...state, speed: action.speed, running: true };
     case "BUY_LANE":
       if (state.money < COSTS.lane || state.lanes >= LIMITS.maxLanes) return state;
@@ -38,6 +39,8 @@ export function reducer(state, action) {
         upgradeNotice: { type: "runway", label: "Pista potenziata", ttl: 9 },
       };
     }
+    case "MARK_MISSION_SAVED":
+      return { ...state, missionSaved: true };
     case "RESET":
       return initialState(state.airportId);
     default:

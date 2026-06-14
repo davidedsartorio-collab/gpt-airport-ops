@@ -1,5 +1,6 @@
 import { AIRLINES, COSTS, LIMITS, RATES } from "./constants.js";
 import { makeRng } from "./rng.js";
+import { evaluateObjectives, finalizeMission, missionElapsedMinutes } from "./objectives.js";
 
 function pickEvent(tuning, rng) {
   const weights = tuning?.events || { rush: 0.42, weather: 0.36, security: 0.22 };
@@ -37,7 +38,7 @@ function detectBottleneck({ securityQueue, lanes, clearedPool, flights, gates, r
 }
 
 export function tick(s) {
-  if (s.gameOver) return s;
+  if (s.gameOver || s.missionComplete) return s;
 
   // Seeded RNG, restored from state so the run is deterministic and replayable.
   const rng = makeRng(s.rngState);
@@ -158,9 +159,11 @@ export function tick(s) {
 
   let gameOver = false;
   let running = s.running;
+  let failReason = s.failReason || null;
   if (reputation <= 0 || money < 0) {
     gameOver = true;
     running = false;
+    failReason = reputation <= 0 ? "Reputazione a zero" : "Bancarotta";
   }
 
   const lastBottleneck = detectBottleneck({ securityQueue, lanes, clearedPool, flights, gates, runwayLevel, event });
@@ -168,7 +171,7 @@ export function tick(s) {
     ? { ...s.upgradeNotice, ttl: s.upgradeNotice.ttl - 1 }
     : null;
 
-  return {
+  const nextState = {
     ...s,
     minute,
     money,
@@ -190,6 +193,7 @@ export function tick(s) {
     eventCooldown,
     gameOver,
     running,
+    failReason,
     lastDeparted,
     estWait,
     throughput,
@@ -199,4 +203,19 @@ export function tick(s) {
     visualMilestone: Math.min(5, 1 + Math.floor(Math.max(0, lanes - 3 + gates - 3 + runwayLevel - 1) / 2)),
     rngState: rng.state(),
   };
+
+  const missionProgress = evaluateObjectives(nextState);
+  if (!gameOver && missionElapsedMinutes(nextState) >= (nextState.dayLength || 720)) {
+    const missionResult = finalizeMission({ ...nextState, missionProgress });
+    return {
+      ...nextState,
+      running: false,
+      missionComplete: true,
+      missionProgress,
+      missionResult,
+      stars: missionResult.stars,
+    };
+  }
+
+  return { ...nextState, missionProgress };
 }

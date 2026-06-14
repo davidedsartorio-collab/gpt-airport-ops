@@ -41,6 +41,15 @@ export const AIRPORTS = [
       "Non andare in rosso",
       "Chiudi con reputazione 70+",
     ],
+    mission: {
+      dayLength: 720,
+      objectives: [
+        { id: "pax", type: "pax", op: ">=", target: 2000, label: "Servi 2.000 passeggeri" },
+        { id: "onTime", type: "onTime", op: ">=", target: 75, label: "Puntualità sopra il 75%" },
+        { id: "cash", type: "cash", op: ">=", target: 1, label: "Non andare in rosso" },
+        { id: "reputation", type: "reputation", op: ">=", target: 70, label: "Chiudi con reputazione 70+" },
+      ],
+    },
     unlocks: "Completa Terra-01 con 2 stelle per sbloccare Low-Cost Chaos Hub.",
     difficulty: 1,
   },
@@ -71,6 +80,15 @@ export const AIRPORTS = [
       events: { rush: 0.62, weather: 0.18, security: 0.20 },
     },
     objectives: ["Servi 3.500 passeggeri", "Attesa media sotto 16 min", "Non sovracostruire", "Raggiungi 85% utilizzo gate"],
+    mission: {
+      dayLength: 720,
+      objectives: [
+        { id: "pax", type: "pax", op: ">=", target: 3500, label: "Servi 3.500 passeggeri" },
+        { id: "wait", type: "wait", op: "<=", target: 16, label: "Attesa media sotto 16 min" },
+        { id: "cash", type: "cash", op: ">=", target: 15000, label: "Cassa finale sopra €15k" },
+        { id: "onTime", type: "onTime", op: ">=", target: 78, label: "Puntualità sopra il 78%" },
+      ],
+    },
     unlocks: "Bloccato: completa prima Terra-01.",
     difficulty: 2,
   },
@@ -101,6 +119,15 @@ export const AIRPORTS = [
       events: { rush: 0.25, weather: 0.58, security: 0.17 },
     },
     objectives: ["Puntualità sopra l'82%", "Supera 3 eventi meteo", "Potenzia la pista una volta", "Evita il crollo reputazione"],
+    mission: {
+      dayLength: 720,
+      objectives: [
+        { id: "onTime", type: "onTime", op: ">=", target: 82, label: "Puntualità sopra l'82%" },
+        { id: "runway", type: "runway", op: ">=", target: 2, label: "Potenzia la pista una volta" },
+        { id: "reputation", type: "reputation", op: ">=", target: 68, label: "Evita il crollo reputazione" },
+        { id: "wait", type: "wait", op: "<=", target: 18, label: "Attesa media sotto 18 min" },
+      ],
+    },
     unlocks: "Bloccato: domina le operazioni low-cost.",
     difficulty: 3,
   },
@@ -131,6 +158,15 @@ export const AIRPORTS = [
       events: { rush: 0.20, weather: 0.35, security: 0.45 },
     },
     objectives: ["Proteggi le partenze VIP", "Mantieni reputazione sopra 85", "Costruisci operazioni resilienti", "Sblocca le rotte orbitali"],
+    mission: {
+      dayLength: 720,
+      objectives: [
+        { id: "reputation", type: "reputation", op: ">=", target: 85, label: "Mantieni reputazione sopra 85" },
+        { id: "onTime", type: "onTime", op: ">=", target: 86, label: "Proteggi le partenze VIP" },
+        { id: "cash", type: "cash", op: ">=", target: 25000, label: "Costruisci operazioni resilienti" },
+        { id: "runway", type: "runway", op: ">=", target: 3, label: "Sblocca rotte orbitali" },
+      ],
+    },
     unlocks: "Bloccato: sopravvivi a Island Storm Airport.",
     difficulty: 4,
   },

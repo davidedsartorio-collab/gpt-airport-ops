@@ -1,4 +1,5 @@
 import { GAME } from "./constants.js";
+import { evaluateObjectives, DEFAULT_DAY_LENGTH } from "./objectives.js";
 import { getAirportById } from "../data/airportTemplates.js";
 import { seedFrom } from "./rng.js";
 
@@ -7,7 +8,7 @@ export function initialState(airportId = "earth-regional", seed) {
   // If no seed is passed (normal play), pick a random one and STORE it, so any
   // run can be replayed by re-initialising with the same airportId + seed.
   const actualSeed = seed ?? Math.floor(Math.random() * 0xffffffff);
-  return {
+  const state = {
     running: true,
     speed: 1,
     gameOver: false,
@@ -38,6 +39,13 @@ export function initialState(airportId = "earth-regional", seed) {
     airportName: airport.name,
     airportTheme: airport.theme,
     objectives: airport.objectives,
+    missionObjectives: airport.mission?.objectives || [],
+    dayStartMinute: GAME.startMinute,
+    dayLength: airport.mission?.dayLength || DEFAULT_DAY_LENGTH,
+    missionProgress: [],
+    missionComplete: false,
+    missionSaved: false,
+    missionResult: null,
     tuning: airport.tuning,
     stars: 0,
     upgradeNotice: null,
@@ -45,4 +53,5 @@ export function initialState(airportId = "earth-regional", seed) {
     seed: actualSeed,
     rngState: seedFrom(`${airport.id}:${actualSeed}`),
   };
+  return { ...state, missionProgress: evaluateObjectives(state) };
 }
