@@ -1,41 +1,76 @@
-# Airport Ops — Claude/Vite Prototype
+# Airport Ops — Visual v2
 
-Questo progetto impacchetta il file `airport-ops.jsx` in una app React/Vite avviabile.
+Versione 2D del prototipo Airport Ops.
+
+Questa versione sposta il gioco verso la direzione corretta: non una dashboard statica, ma una **live ops view** dove il giocatore vede passeggeri, code, gate e pista muoversi in tempo reale.
+
+## Cosa cambia rispetto alla v1
+
+- Codice separato in moduli:
+  - `src/sim/` = motore simulazione
+  - `src/render/` = rendering Canvas 2D
+  - `src/ui/` = componenti UI
+- Nuovo `TerminalCanvas` con:
+  - terminale schematico 2D
+  - omini/pax animati
+  - coda security visiva
+  - gate visualizzati
+  - pista animata
+  - highlight del bottleneck
+- Nuovo pannello `Ops AI` per indicare il collo di bottiglia principale.
 
 ## Avvio
 
-1. Scarica e decomprimi lo ZIP.
-2. Apri Terminale.
-3. Entra nella cartella dove lo hai decompresso, ad esempio:
-
-```bash
-cd ~/Downloads/airport-ops-claude-vite
-```
-
-4. Installa le dipendenze:
-
 ```bash
 npm install
-```
-
-5. Avvia la demo:
-
-```bash
 npm run dev
 ```
 
-6. Apri l'URL indicato dal terminale, di solito `http://localhost:5173`.
+Apri l'URL indicato dal terminale, di solito:
 
-## File principali
-
-- `src/App.jsx`: prototipo completo Airport Ops.
-- `src/main.jsx`: monta il componente React nella pagina.
-- `package.json`: dipendenze e comandi npm.
-
-## Nota
-
-Se vedi `cd: no such file or directory`, vuol dire che non sei nella cartella dove hai scaricato/decompresso il progetto. Prima controlla con:
-
-```bash
-ls ~/Downloads
+```text
+http://localhost:5173
 ```
+
+## Struttura
+
+```text
+src/
+  App.jsx
+  main.jsx
+  style.css
+  sim/
+    constants.js
+    initialState.js
+    reducer.js
+    selectors.js
+    tick.js
+  render/
+    TerminalCanvas.jsx
+  ui/
+    BottleneckPanel.jsx
+    ChartPanel.jsx
+    EventBanner.jsx
+    GatePanel.jsx
+    InvestmentPanel.jsx
+    KpiPanel.jsx
+    Panel.jsx
+```
+
+## Prossimo step consigliato
+
+Dopo questa v2, la prossima milestone è trasformare i passeggeri da visualizzazione proporzionale a entità vere nel motore:
+
+```js
+{
+  id,
+  x,
+  y,
+  state,
+  target,
+  flightId,
+  patience
+}
+```
+
+Questo renderà il gameplay più ricco e permetterà pathfinding, priorità, business pax, fast track e aeroporti sbloccabili con layout diversi.
