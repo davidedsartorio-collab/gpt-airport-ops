@@ -1,37 +1,60 @@
-# Airport Ops Visual v15
+# Airport Ops — Visual v16 Docs Pack
 
-V15 is a QA/polish pass after v14. It keeps the same canonical production map, but moves further toward a real asset pipeline.
+Questa versione parte dalla v15 e aggiunge la documentazione ufficiale del progetto, costruita dalle decisioni prese in chat.
 
-## What changed from v14
+## Cosa contiene
 
-- Extracted individual NPC sprites from the generated NPC reference sheet.
-- Extracted plane and service-vehicle sprites from the generated plane/vehicle sheet.
-- Pixi renderer now uses the extracted sprites instead of only vector placeholders.
-- NPCs swap between walk/wait/luggage textures while moving through the sim paths.
-- Plane and service vehicle visuals are more aligned with the generated art direction.
-- Added `?autostart=1` dev shortcut for direct live-map QA.
-- Kept the same fixed canonical terminal base: no new scene reinterpretation.
-- Build tested successfully.
+- Pixi live renderer con base map production.
+- Sprite NPC, aerei e veicoli estratti.
+- Mission loop con stelle e unlock.
+- Registry npm pubblico in `.npmrc`.
+- Documentazione progetto in `docs/`.
 
-## Run
+## Documenti importanti
+
+Leggere in questo ordine:
+
+1. `docs/PROJECT_MEMORY.md` — memoria completa del progetto.
+2. `docs/VISUAL_BIBLE.md` — regole artistiche ufficiali.
+3. `docs/ASSET_PIPELINE.md` — come gestire immagini/sprite/overlay.
+4. `docs/ROADMAP.md` — prossime versioni v16-v23.
+5. `docs/IMPLEMENTATION_NOTES.md` — note tecniche di sviluppo.
+6. `docs/PROMPTS_AND_ART_DIRECTION.md` — prompt e regole per generare asset coerenti.
+7. `docs/VERSION_HISTORY.md` — cronologia versioni.
+
+## Run locale
 
 ```bash
+cd ~/Desktop/"GPT Game"/airport-ops-claude-vite
 npm install --no-audit --no-fund
 npm run dev
 ```
 
-Open:
-
-```text
-http://localhost:5173/
-```
-
-For direct live-view QA:
+Live view diretta:
 
 ```text
 http://localhost:5173/?autostart=1
 ```
 
-## Notes
+## Se npm dà problemi
 
-This is still not final production polish. The important improvement is pipeline quality: the map stays fixed, while people, planes, vehicles, doors and overlays are separate dynamic layers.
+```bash
+rm -rf node_modules package-lock.json
+npm config set registry https://registry.npmjs.org/
+npm install --no-audit --no-fund --registry=https://registry.npmjs.org/
+npm run dev
+```
+
+## Push
+
+```bash
+cd ~/Desktop/"GPT Game"/airport-ops-claude-vite
+git status
+git add .
+git commit -m "Add project visual bible and production docs"
+git push
+```
+
+## Nota
+
+Da ora la direzione ufficiale è: una mappa canonica stabile, NPC/aerei/veicoli separati, upgrade come moduli, eventi come overlay, UI mobile-first.
