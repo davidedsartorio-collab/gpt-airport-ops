@@ -333,7 +333,7 @@ export function TerminalCanvas({ state }) {
         ctx.restore();
       }
 
-      text(ctx, "PLAYABLE AIRPORT VIEW", L.pad, 28, C.text, 12, "left", 900, true);
+      text(ctx, "VISTA OPERATIVA LIVE", L.pad, 28, C.text, 12, "left", 900, true);
       text(ctx, s.airportName || "Airport", w - L.pad, 28, theme.primary || C.teal, 11, "right", 900, true);
 
       // Big shell
@@ -341,7 +341,7 @@ export function TerminalCanvas({ state }) {
         stroke: "rgba(255,255,255,.14)", fill: "rgba(255,255,255,.03)", accent: theme.primary || C.teal, radius: 28,
       });
 
-      drawRoom(ctx, L.lobby.x, L.lobby.y, L.lobby.w, L.lobby.h, "HALL", {
+      drawRoom(ctx, L.lobby.x, L.lobby.y, L.lobby.w, L.lobby.h, "HALL ARRIVI", {
         stroke: theme.secondary || C.green,
         fill: "rgba(97,211,148,.06)",
         accent: theme.secondary || C.green,
@@ -363,18 +363,18 @@ export function TerminalCanvas({ state }) {
         fill: "rgba(185,137,255,.055)",
         accent: C.purple,
       });
-      drawRoom(ctx, L.baggage.x, L.baggage.y, L.baggage.w, L.baggage.h, "SORT", {
+      drawRoom(ctx, L.baggage.x, L.baggage.y, L.baggage.w, L.baggage.h, "BAGAGLI", {
         stroke: bagPressure > 0.7 ? C.red : C.runway,
         fill: "rgba(232,200,74,.05)",
         accent: C.runway,
       });
-      drawRoom(ctx, L.gateArea.x, L.gateArea.y, L.gateArea.w, L.gateArea.h, "GATE CLUSTER", {
+      drawRoom(ctx, L.gateArea.x, L.gateArea.y, L.gateArea.w, L.gateArea.h, "GATE", {
         stroke: gatePressure > 0.85 ? C.amber : theme.primary || C.blue,
         fill: "rgba(77,163,255,.04)",
         accent: theme.primary || C.blue,
         glow: s.lastBottleneck === "gate",
       });
-      drawRoom(ctx, L.runway.x, L.runway.y, L.runway.w, L.runway.h, "RUNWAY OPS", {
+      drawRoom(ctx, L.runway.x, L.runway.y, L.runway.w, L.runway.h, "PISTA", {
         stroke: s.event?.type === "weather" ? C.red : C.runway,
         fill: "rgba(232,200,74,.045)",
         accent: C.runway,
@@ -383,9 +383,9 @@ export function TerminalCanvas({ state }) {
       });
 
       // route signs
-      drawArrowSign(ctx, L.lobby.x + 10, L.lobby.y + L.lobby.h - 34, "TO SECURITY", theme.secondary || C.green);
-      drawArrowSign(ctx, L.bagDrop.x + 10, L.bagDrop.y + L.bagDrop.h - 34, "TO BELT", C.amber);
-      drawArrowSign(ctx, L.hold.x + 6, L.hold.y + L.hold.h - 34, "TO GATES", C.purple);
+      drawArrowSign(ctx, L.lobby.x + 10, L.lobby.y + L.lobby.h - 34, "SECURITY", theme.secondary || C.green);
+      drawArrowSign(ctx, L.bagDrop.x + 10, L.bagDrop.y + L.bagDrop.h - 34, "BAGAGLI", C.amber);
+      drawArrowSign(ctx, L.hold.x + 6, L.hold.y + L.hold.h - 34, "GATE", C.purple);
 
       // hall details
       for (let i = 0; i < 4; i += 1) drawDesk(ctx, L.lobby.x + 18 + i * 20, L.lobby.y + 22, 14, 8, "rgba(255,255,255,.14)");
@@ -628,7 +628,7 @@ export function TerminalCanvas({ state }) {
       const planeT = ((tick * 0.1 * Math.max(1, s.speed)) % 1);
       drawPlane(ctx, lerp(runwayRect.x + 42, runwayRect.x + runwayRect.w - 42, runwayActive ? planeT : 0.2), runwayCenterY - 4, runwayActive, s.event?.type === "weather" ? C.red : C.runway, s.runwayLevel >= 3 ? 1.08 : 1);
       text(ctx, `${s.runwayLevel} LVL`, runwayRect.x + runwayRect.w - 18, L.runway.y + 23, s.event?.type === "weather" ? C.red : C.runway, 10, "right", 900, true);
-      text(ctx, s.lastDeparted ? `${s.lastDeparted} DECOLLATO` : "RUNWAY READY", L.runway.x + 18, L.runway.y + 23, runwayActive ? C.runway : C.green, 10, "left", 800);
+      text(ctx, s.lastDeparted ? `${s.lastDeparted} DECOLLATO` : "PISTA PRONTA", L.runway.x + 18, L.runway.y + 23, runwayActive ? C.runway : C.green, 10, "left", 800);
 
       // canvas mini overlays
       const badgeColor = s.event ? eventBadgeColor(s.event.type, theme) : theme.primary || C.teal;
@@ -638,8 +638,8 @@ export function TerminalCanvas({ state }) {
       ctx.strokeStyle = badgeColor;
       ctx.lineWidth = 1.6;
       ctx.stroke();
-      text(ctx, s.event ? s.event.label.toUpperCase() : `PRIMARY BOTTLENECK · ${s.lastBottleneck.toUpperCase()}`, w - 238, h - 34, badgeColor, 10, "left", 900);
-      text(ctx, `hall → bag drop → security → gate → runway`, L.pad + 6, h - 34, C.dim, 10, "left", 800, true);
+      text(ctx, s.event ? s.event.label.toUpperCase() : `COLLO PRINCIPALE · ${s.lastBottleneck.toUpperCase()}`, w - 238, h - 34, badgeColor, 10, "left", 900);
+      text(ctx, `hall → bag drop → security → gate → pista`, L.pad + 6, h - 34, C.dim, 10, "left", 800, true);
 
       raf = requestAnimationFrame(draw);
     }

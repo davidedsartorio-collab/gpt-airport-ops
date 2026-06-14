@@ -26,9 +26,9 @@ function GateCell({ flight, index }) {
   );
 }
 
-export function GatePanel({ state, waitingFlights }) {
+export function GatePanel({ state, waitingFlights, compact = false }) {
   return (
-    <Panel title="Gate Ops" icon={<Plane size={14} color={C.teal} style={{ transform: "rotate(45deg)" }} />} right={waitingFlights.length ? `${waitingFlights.length} in holding` : "flow stabile"}>
+    <Panel className={compact ? "panel--compact-gates" : ""} title="Gate Ops" icon={<Plane size={14} color={C.teal} style={{ transform: "rotate(45deg)" }} />} right={waitingFlights.length ? `${waitingFlights.length} in holding` : "flow stabile"}>
       <div className="gates-grid">
         {Array.from({ length: state.gates }).map((_, g) => <GateCell key={g} index={g} flight={state.flights.find((f) => f.gate === g)} />)}
       </div>

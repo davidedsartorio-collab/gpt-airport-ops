@@ -424,3 +424,268 @@ button { font: inherit; }
   .hud-pill__value { font-size: 17px; }
   .terminal-canvas { height: 560px; }
 }
+
+/* ---------------- v6: UI/UX pass - clearer HUD, central upgrades, no-scroll intent ---------------- */
+.app--single-screen {
+  width: min(1500px, calc(100% - 24px));
+  padding-top: 12px;
+}
+.topbar--v6 {
+  margin-bottom: 10px;
+}
+.mission-btn {
+  height: 38px;
+  border-radius: 13px;
+  border: 1px solid color-mix(in srgb, var(--airport-primary, #3bd5dd) 32%, #244054);
+  background: linear-gradient(180deg, rgba(17,31,43,.94), rgba(10,18,26,.94));
+  color: #eaf4fb;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+}
+.mission-btn strong {
+  min-width: 19px;
+  height: 19px;
+  border-radius: 999px;
+  background: var(--airport-primary, #3bd5dd);
+  color: #071018;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.hud-strip--v6 {
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.hud-pill {
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+}
+.hud-pill--active {
+  border-color: var(--airport-primary, #3bd5dd);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--airport-primary, #3bd5dd) 18%, transparent), 0 14px 30px rgba(0,0,0,.18);
+}
+.hud-pill__label svg:last-child {
+  margin-left: auto;
+  opacity: .55;
+}
+.kpi-help {
+  margin: -2px 0 10px;
+  border: 1px solid color-mix(in srgb, var(--airport-primary, #3bd5dd) 32%, #244054);
+  background: linear-gradient(180deg, rgba(17,31,43,.96), rgba(10,18,26,.96));
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+}
+.kpi-help strong {
+  color: var(--airport-primary, #3bd5dd);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.kpi-help span {
+  color: #b9c8d5;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.upgrade-bar {
+  border: 1px solid color-mix(in srgb, var(--airport-primary, #3bd5dd) 28%, #244054);
+  background: linear-gradient(180deg, rgba(13,24,34,.95), rgba(8,16,24,.95));
+  border-radius: 18px;
+  padding: 11px;
+  margin-bottom: 12px;
+  box-shadow: 0 18px 42px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.03);
+  backdrop-filter: blur(10px);
+}
+.upgrade-bar__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: #eaf4fb;
+}
+.upgrade-bar__head div {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-size: 12px;
+}
+.upgrade-bar__head span {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  color: #8ea6b7;
+}
+.upgrade-bar .invest-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.upgrade-bar .invest-btn {
+  min-height: 78px;
+  background: linear-gradient(180deg, rgba(23,40,56,.86), rgba(11,20,29,.86));
+}
+.invest-btn__hint {
+  margin-top: 6px;
+  color: #62798a;
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ops-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 12px;
+  align-items: stretch;
+}
+.map-card--v6 {
+  min-height: 0;
+}
+.map-card--v6 .map-card__head {
+  height: 42px;
+  padding-inline: 12px;
+}
+.map-card--v6 .terminal-canvas {
+  height: clamp(500px, calc(100vh - 338px), 660px);
+}
+.ops-side {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+.ops-side .panel {
+  min-height: 0;
+}
+.panel--compact-gates {
+  overflow: hidden;
+}
+.panel--compact-gates .gates-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: calc(100vh - 520px);
+  min-height: 220px;
+  overflow: auto;
+  padding-right: 2px;
+}
+.panel--compact-gates .gate-cell {
+  min-height: 58px;
+  padding: 8px;
+}
+.panel--compact-gates .gate-cell__meta {
+  font-size: 9.5px;
+}
+.mission-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4,9,14,.58);
+  backdrop-filter: blur(8px);
+  z-index: 60;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 76px 20px 20px max(20px, calc((100vw - 1500px) / 2 + 20px));
+}
+.mission-popover {
+  width: min(430px, calc(100vw - 40px));
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--airport-primary, #3bd5dd) 34%, #244054);
+  background: linear-gradient(180deg, rgba(17,31,43,.98), rgba(8,16,24,.98));
+  box-shadow: 0 28px 80px rgba(0,0,0,.42);
+  padding: 18px;
+  position: relative;
+}
+.mission-popover__close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.04);
+  color: #eaf4fb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.mission-popover__kicker {
+  color: var(--airport-primary, #3bd5dd);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 900;
+}
+.mission-popover h2 {
+  margin: 8px 36px 8px 0;
+  font-size: 25px;
+  line-height: 1.05;
+}
+.mission-popover p {
+  color: #8ea6b7;
+  line-height: 1.55;
+  font-size: 13px;
+}
+.mission-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+.mission-progress-grid span {
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 13px;
+  padding: 9px;
+  color: #8ea6b7;
+  font-size: 11px;
+  background: rgba(255,255,255,.025);
+}
+.mission-progress-grid strong {
+  display: block;
+  color: #eaf4fb;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 15px;
+}
+.mission-list {
+  display: grid;
+  gap: 7px;
+}
+.mission-list div {
+  color: #b9c8d5;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 7px 9px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.025);
+}
+@media (max-width: 1180px) {
+  .hud-strip--v6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ops-layout { grid-template-columns: 1fr; }
+  .ops-side { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .panel--compact-gates .gates-grid { max-height: none; min-height: 0; }
+  .map-card--v6 .terminal-canvas { height: 560px; }
+}
+@media (max-width: 760px) {
+  .hud-strip--v6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .upgrade-bar .invest-grid { grid-template-columns: 1fr; }
+  .ops-side { grid-template-columns: 1fr; }
+  .mission-btn span { display: none; }
+  .kpi-help { flex-direction: column; gap: 4px; }
+  .mission-progress-grid { grid-template-columns: 1fr; }
+}
