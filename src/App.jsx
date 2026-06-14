@@ -7,7 +7,7 @@ import { AirportSelectScreen } from "./screens/AirportSelectScreen";
 import { LiveOpsScreen } from "./screens/LiveOpsScreen";
 
 export default function App() {
-  const [screen, setScreen] = useState("select");
+  const [screen, setScreen] = useState(() => new URLSearchParams(window.location.search).get("autostart") === "1" ? "live" : "select");
   const [campaign, setCampaign] = useState(() => loadCampaign());
   const [state, dispatch] = useReducer(reducer, undefined, () => initialState("earth-regional"));
 
