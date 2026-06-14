@@ -1,8 +1,12 @@
-import { GAME } from "./constants";
-import { getAirportById } from "../data/airportTemplates";
+import { GAME } from "./constants.js";
+import { getAirportById } from "../data/airportTemplates.js";
+import { seedFrom } from "./rng.js";
 
-export function initialState(airportId = "earth-regional") {
+export function initialState(airportId = "earth-regional", seed) {
   const airport = getAirportById(airportId);
+  // If no seed is passed (normal play), pick a random one and STORE it, so any
+  // run can be replayed by re-initialising with the same airportId + seed.
+  const actualSeed = seed ?? Math.floor(Math.random() * 0xffffffff);
   return {
     running: true,
     speed: 1,
@@ -36,5 +40,7 @@ export function initialState(airportId = "earth-regional") {
     objectives: airport.objectives,
     tuning: airport.tuning,
     stars: 0,
+    seed: actualSeed,
+    rngState: seedFrom(`${airport.id}:${actualSeed}`),
   };
 }

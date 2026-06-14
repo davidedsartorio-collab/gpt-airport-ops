@@ -1,13 +1,13 @@
-import { COSTS, LIMITS } from "./constants";
-import { initialState } from "./initialState";
-import { tick } from "./tick";
+import { COSTS, LIMITS } from "./constants.js";
+import { initialState } from "./initialState.js";
+import { tick } from "./tick.js";
 
 export function reducer(state, action) {
   switch (action.type) {
     case "TICK":
       return tick(state);
     case "START_AIRPORT":
-      return initialState(action.airportId);
+      return initialState(action.airportId, action.seed);
     case "TOGGLE_PAUSE":
       return { ...state, running: !state.running };
     case "SET_SPEED":

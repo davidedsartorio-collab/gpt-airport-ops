@@ -1,44 +1,76 @@
-# Airport Ops — Visual v3
+# Airport Ops — Visual v2
 
-This version moves the prototype toward the final direction:
+Versione 2D del prototipo Airport Ops.
 
-- 2D live terminal view
-- stylized capsule passengers inspired by playful 2D social games, but original
-- first campaign/world-map layer
-- unlockable airport templates
-- airport-specific tuning and themes
-- separated simulation/render/UI structure
+Questa versione sposta il gioco verso la direzione corretta: non una dashboard statica, ma una **live ops view** dove il giocatore vede passeggeri, code, gate e pista muoversi in tempo reale.
 
-## Run locally
+## Cosa cambia rispetto alla v1
+
+- Codice separato in moduli:
+  - `src/sim/` = motore simulazione
+  - `src/render/` = rendering Canvas 2D
+  - `src/ui/` = componenti UI
+- Nuovo `TerminalCanvas` con:
+  - terminale schematico 2D
+  - omini/pax animati
+  - coda security visiva
+  - gate visualizzati
+  - pista animata
+  - highlight del bottleneck
+- Nuovo pannello `Ops AI` per indicare il collo di bottiglia principale.
+
+## Avvio
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the local Vite URL, usually:
+Apri l'URL indicato dal terminale, di solito:
 
 ```text
-http://localhost:5173/
+http://localhost:5173
 ```
 
-## New v3 files
+## Struttura
 
 ```text
-src/data/airportTemplates.js
-src/screens/AirportSelectScreen.jsx
-src/screens/LiveOpsScreen.jsx
-src/render/TerminalCanvas.jsx
+src/
+  App.jsx
+  main.jsx
+  style.css
+  sim/
+    constants.js
+    initialState.js
+    reducer.js
+    selectors.js
+    tick.js
+  render/
+    TerminalCanvas.jsx
+  ui/
+    BottleneckPanel.jsx
+    ChartPanel.jsx
+    EventBanner.jsx
+    GatePanel.jsx
+    InvestmentPanel.jsx
+    KpiPanel.jsx
+    Panel.jsx
 ```
 
-## What changed
+## Prossimo step consigliato
 
-- `App.jsx` now controls screen flow: Airport Select → Live Ops.
-- `initialState()` now accepts an airport id and loads starting values from `airportTemplates.js`.
-- `tick.js` now uses airport tuning for demand and event probabilities.
-- `TerminalCanvas.jsx` now uses more playful 2D capsule passengers with simple visor/body shapes.
-- `style.css` includes the campaign map, airport cards, and more game-like presentation.
+Dopo questa v2, la prossima milestone è trasformare i passeggeri da visualizzazione proporzionale a entità vere nel motore:
 
-## Next step
+```js
+{
+  id,
+  x,
+  y,
+  state,
+  target,
+  flightId,
+  patience
+}
+```
 
-Make passengers real entities in the simulation engine instead of only a proportional visualization layer.
+Questo renderà il gameplay più ricco e permetterà pathfinding, priorità, business pax, fast track e aeroporti sbloccabili con layout diversi.

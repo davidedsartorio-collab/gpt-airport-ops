@@ -1,4 +1,4 @@
-import { COSTS } from "./constants";
+import { COSTS } from "./constants.js";
 
 export const clock = (m) => {
   const t = ((m % 1440) + 1440) % 1440;

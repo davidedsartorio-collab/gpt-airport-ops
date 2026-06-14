@@ -1,17 +1,18 @@
-import { AIRLINES, COSTS, LIMITS, RATES } from "./constants";
+import { AIRLINES, COSTS, LIMITS, RATES } from "./constants.js";
+import { makeRng } from "./rng.js";
 
-function pickEvent(tuning) {
+function pickEvent(tuning, rng) {
   const weights = tuning?.events || { rush: 0.42, weather: 0.36, security: 0.22 };
-  const r = Math.random();
+  const r = rng();
   if (r < weights.rush) return { type: "rush", label: "Ora di punta — ondata di voli in arrivo", ticksLeft: 12 };
   if (r < weights.rush + weights.weather) return { type: "weather", label: "Maltempo — capacità pista ridotta", ticksLeft: 15 };
   return { type: "security", label: "Security alert — processi più lenti", ticksLeft: 10 };
 }
 
-function nextCooldown(tuning) {
+function nextCooldown(tuning, rng) {
   const min = tuning?.eventCooldownMin ?? 40;
   const max = tuning?.eventCooldownMax ?? 70;
-  return min + Math.floor(Math.random() * Math.max(1, max - min));
+  return min + Math.floor(rng() * Math.max(1, max - min));
 }
 
 function detectBottleneck({ securityQueue, lanes, clearedPool, flights, gates, runwayLevel, event }) {
@@ -37,6 +38,9 @@ function detectBottleneck({ securityQueue, lanes, clearedPool, flights, gates, r
 
 export function tick(s) {
   if (s.gameOver) return s;
+
+  // Seeded RNG, restored from state so the run is deterministic and replayable.
+  const rng = makeRng(s.rngState);
 
   let {
     minute,
@@ -65,11 +69,11 @@ export function tick(s) {
     event = { ...event, ticksLeft: event.ticksLeft - 1 };
     if (event.ticksLeft <= 0) {
       event = null;
-      eventCooldown = nextCooldown(s.tuning);
+      eventCooldown = nextCooldown(s.tuning, rng);
     }
   } else {
     eventCooldown -= 1;
-    if (eventCooldown <= 0) event = pickEvent(s.tuning);
+    if (eventCooldown <= 0) event = pickEvent(s.tuning, rng);
   }
 
   const hours = Math.max(0, Math.floor((minute - 360) / 60));
@@ -84,12 +88,12 @@ export function tick(s) {
   nextSpawnIn -= 1;
 
   if (nextSpawnIn <= 0) {
-    const pax = paxMin + Math.floor(Math.random() * (paxMax - paxMin + 1));
-    const code = AIRLINES[Math.floor(Math.random() * AIRLINES.length)] + (100 + Math.floor(Math.random() * 899));
+    const pax = paxMin + Math.floor(rng() * (paxMax - paxMin + 1));
+    const code = AIRLINES[Math.floor(rng() * AIRLINES.length)] + (100 + Math.floor(rng() * 899));
     flights.push({ id: flightSeq, code, pax, boarded: 0, status: "wait", gate: null, age: 0 });
     flightSeq += 1;
     securityQueue += pax;
-    nextSpawnIn = baseInterval + Math.floor(Math.random() * 3);
+    nextSpawnIn = baseInterval + Math.floor(rng() * 3);
   }
 
   const occupied = new Set(flights.filter((f) => f.gate != null).map((f) => f.gate));
@@ -188,5 +192,6 @@ export function tick(s) {
     throughput,
     occCount,
     lastBottleneck,
+    rngState: rng.state(),
   };
 }

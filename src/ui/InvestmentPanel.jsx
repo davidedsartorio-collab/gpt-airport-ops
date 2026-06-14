@@ -28,7 +28,7 @@ export function InvestmentPanel({ state, score, dispatch }) {
         <InvestButton icon={<Plane size={15} color={C.teal} style={{ transform: "rotate(45deg)" }} />} label="Nuovo gate" count={state.gates} max={LIMITS.maxGates} cost={COSTS.gate} upkeep={COSTS.gateUpkeep} disabled={state.money < COSTS.gate} onClick={() => dispatch({ type: "BUY_GATE" })} />
         <InvestButton icon={<Activity size={15} color={C.runway} />} label="Potenzia pista" count={state.runwayLevel} max={LIMITS.maxRunway} cost={COSTS.runwayBase * state.runwayLevel} upkeep={COSTS.runwayUpkeep * state.runwayLevel} disabled={state.money < COSTS.runwayBase * state.runwayLevel} onClick={() => dispatch({ type: "UPGRADE_RUNWAY" })} />
       </div>
-      <p className="panel-note">La mappa non è decorazione: usa la visualizzazione per capire quale collo di bottiglia sta distruggendo throughput e puntualità.</p>
+      <p className="panel-note">Ogni upgrade deve sentirsi anche a schermo: più corsie, gate lounge più ricchi e runway più strutturata. Compra leggendo il flusso, non solo i numeri.</p>
     </Panel>
   );
 }

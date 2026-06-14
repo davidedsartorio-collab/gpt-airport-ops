@@ -201,3 +201,226 @@ button { font: inherit; }
   .airport-grid { grid-template-columns: 1fr; }
   .airport-card { min-height: auto; }
 }
+
+/* ---------------- v4: graphic pass / more playful 2D style ---------------- */
+.app-shell {
+  background:
+    radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--airport-primary, #3bd5dd) 18%, transparent), transparent 32%),
+    radial-gradient(circle at 92% 22%, color-mix(in srgb, var(--airport-secondary, #f6a623) 12%, transparent), transparent 28%),
+    linear-gradient(180deg, #081018, #09131d 34%, #071017);
+}
+.topbar,
+.map-card,
+.panel,
+.world-map-card,
+.airport-card,
+.brief-card {
+  backdrop-filter: blur(10px);
+}
+.brand {
+  letter-spacing: 1.6px;
+}
+.subtitle {
+  color: color-mix(in srgb, var(--airport-primary, #3bd5dd) 22%, #b8c6d3);
+}
+.map-card {
+  background: linear-gradient(180deg, rgba(12,24,34,.96), rgba(8,16,24,.95));
+  border-color: color-mix(in srgb, var(--airport-primary, #3bd5dd) 28%, #244054);
+  box-shadow: 0 24px 60px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.03);
+}
+.map-card__head {
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.map-card__legend span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.terminal-canvas {
+  height: 620px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(8,14,20,.66), rgba(8,14,20,.2));
+}
+.panel {
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.02);
+}
+.panel__title {
+  letter-spacing: 1.35px;
+}
+.kpi-card {
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(17,31,43,.98), rgba(12,22,30,.98));
+}
+.invest-btn,
+.start-airport-btn,
+.reset-btn,
+.back-btn,
+.speed-btn {
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease, background .14s ease;
+}
+.invest-btn:hover,
+.start-airport-btn:hover:not(:disabled),
+.reset-btn:hover,
+.back-btn:hover,
+.speed-btn:hover {
+  transform: translateY(-1px);
+}
+.start-airport-btn {
+  box-shadow: 0 12px 34px color-mix(in srgb, var(--airport-primary) 20%, transparent), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.world-map-card {
+  border-radius: 22px;
+}
+.world-node__orb {
+  width: 60px;
+  height: 60px;
+}
+.airport-card {
+  border-radius: 24px;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.airport-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 26px 60px rgba(0,0,0,.28);
+}
+.airport-card__art {
+  height: 168px;
+}
+.mini-terminal {
+  box-shadow: inset 0 0 24px rgba(255,255,255,.05), 0 10px 22px rgba(0,0,0,.18);
+}
+.mini-terminal__pax {
+  width: 13px;
+  height: 20px;
+  border-radius: 9px 9px 6px 6px;
+  position: absolute;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+}
+.mini-terminal__pax::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 3px;
+  width: 7px;
+  height: 5px;
+  border-radius: 4px;
+  background: rgba(189,239,255,.82);
+  border: 1px solid rgba(0,0,0,.38);
+}
+.select-hero h1 {
+  max-width: 900px;
+}
+.select-emblem {
+  box-shadow: inset 0 0 36px rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28);
+}
+.objectives span {
+  background: rgba(255,255,255,.03);
+}
+@media (max-width: 760px) {
+  .terminal-canvas { height: 520px; }
+}
+
+/* ---------------- v5: less dashboard, more playable airport ---------------- */
+.topbar__brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hud-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.hud-pill {
+  background: linear-gradient(180deg, rgba(18,32,44,.95), rgba(10,18,26,.95));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 11px 12px;
+  box-shadow: 0 14px 30px rgba(0,0,0,.18);
+  min-width: 0;
+}
+.hud-pill__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8ea6b7;
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hud-pill__value {
+  margin-top: 6px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: #eaf4fb;
+  font-size: 19px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hud-pill--ok { border-color: rgba(97,211,148,.3); }
+.hud-pill--warning { border-color: rgba(246,166,35,.36); }
+.hud-pill--danger { border-color: rgba(255,93,104,.38); }
+.hud-pill--info { border-color: rgba(59,213,221,.32); }
+.play-stage { margin-bottom: 14px; }
+.map-card--gameplay {
+  min-height: 0;
+}
+.legend--bag { background: #d8af48; }
+.command-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.05fr 1.05fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.mission-row { margin-bottom: 10px; }
+.mission-card--wide p { margin-top: 6px; }
+.panel,
+.map-card,
+.brief-card,
+.hud-pill {
+  backdrop-filter: blur(10px);
+}
+.invest-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.invest-btn {
+  min-height: 88px;
+}
+.gates-grid {
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+}
+.back-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  color: #dbe8f3;
+  background: rgba(17,31,43,.86);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.mission-card {
+  border-color: color-mix(in srgb, var(--airport-primary, #3bd5dd) 28%, #244054);
+}
+.terminal-canvas {
+  height: 650px;
+}
+@media (max-width: 1180px) {
+  .hud-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .command-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .topbar__brand-group { width: 100%; }
+  .hud-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hud-pill__value { font-size: 17px; }
+  .terminal-canvas { height: 560px; }
+}
