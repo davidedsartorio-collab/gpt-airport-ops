@@ -1,4 +1,5 @@
-import { Activity, ArrowLeft, ClipboardList, Coins, HelpCircle, Pause, Plane, Play, ShieldAlert, Star, Timer, TrendingUp, X } from "lucide-react";
+import { useState } from "react";
+import { Activity, ArrowLeft, CheckCircle2, ClipboardList, Coins, HelpCircle, Pause, Plane, Play, Star, Timer, TrendingUp, X } from "lucide-react";
 import { PALETTE as C } from "../sim/constants";
 import { clock, eur, getUiStats } from "../sim/selectors";
 import { TerminalCanvas } from "../render/TerminalCanvas";
@@ -7,110 +8,98 @@ import { GatePanel } from "../ui/GatePanel";
 import { InvestmentPanel } from "../ui/InvestmentPanel";
 import { BottleneckPanel } from "../ui/BottleneckPanel";
 import { SpeedButton, TinyTag } from "../ui/Panel";
-import { useState } from "react";
 
 const KPI_HELP = {
-  cash: {
-    title: "Cassa",
-    body: "Soldi disponibili. Aumentano con i passeggeri partiti e scendono con investimenti e costi operativi al minuto.",
-  },
-  reputation: {
-    title: "Reputazione",
-    body: "Misura quanto l'aeroporto sta performando. Code troppo lunghe e ritardi la fanno scendere; voli puntuali la migliorano.",
-  },
-  throughput: {
-    title: "Passeggeri/ora",
-    body: "Quanti passeggeri sono stati serviti e fatti partire nell'ultima ora di gioco. È il KPI chiave dell'efficienza.",
-  },
-  wait: {
-    title: "Attesa media",
-    body: "Stima del tempo in coda alla security. Se sale troppo, la reputazione crolla e i voli rischiano ritardi.",
-  },
-  punctuality: {
-    title: "Puntualità",
-    body: "Percentuale di voli partiti entro il limite di tempo previsto. È il cuore della qualità operativa.",
-  },
-  ops: {
-    title: "Operatività",
-    body: "Riassume gate occupati e livello pista. Ti dice quanto è saturo il sistema operativo dell'aeroporto.",
-  },
+  cash: "Denaro disponibile. Se scende sotto zero il turno finisce.",
+  rep: "Misura la qualità percepita dai passeggeri. Code e ritardi la fanno calare.",
+  pax: "Passeggeri processati e partiti nell'ultima ora di gioco.",
+  wait: "Tempo medio stimato in coda ai controlli security.",
+  punctuality: "Percentuale di voli partiti entro il limite di puntualità.",
+  ops: "Sintesi rapida di gate occupati e livello pista.",
 };
 
-function HudPill({ icon, label, value, tone = "neutral", helpKey, active, onClick }) {
+function HudPill({ icon, label, value, tone = "neutral", help }) {
   return (
-    <button className={`hud-pill hud-pill--${tone} ${active ? "hud-pill--active" : ""}`} onClick={() => onClick(helpKey)} type="button">
+    <div className={`hud-pill hud-pill--${tone}`} title={help}>
       <div className="hud-pill__label">{icon}{label}<HelpCircle size={11} /></div>
       <div className="hud-pill__value">{value}</div>
+    </div>
+  );
+}
+
+function shortObjective(objective = "") {
+  return objective
+    .replace("Servi ", "")
+    .replace("Puntualità sopra il ", "Punt. > ")
+    .replace("Puntualità sopra ", "Punt. > ")
+    .replace("Non andare in rosso", "No rosso")
+    .replace("Chiudi con reputazione ", "Rep. ");
+}
+
+function MissionTicker({ objectives, onOpen }) {
+  const compact = objectives?.slice(0, 3) || [];
+  return (
+    <button className="mission-trigger" onClick={onOpen} title="Apri obiettivi missione">
+      <span className="mission-trigger__icon"><ClipboardList size={16} /></span>
+      <span className="mission-trigger__label">Missione</span>
+      <span className="mission-trigger__ticks">
+        {compact.map((objective) => <b key={objective}>{shortObjective(objective)}</b>)}
+      </span>
     </button>
   );
 }
 
-function MissionButton({ onClick, state }) {
-  return (
-    <button className="mission-btn" onClick={onClick} type="button">
-      <ClipboardList size={16} />
-      <span>Missione</span>
-      <strong>{state.objectives?.length || 0}</strong>
-    </button>
-  );
-}
+function MissionModal({ state, stats, onClose }) {
+  const objectives = state.objectives || [];
+  const progress = [
+    { label: objectives[0] || "Servi passeggeri", value: `${state.departedPax.toLocaleString("it-IT")} pax`, pct: Math.min(100, Math.round((state.departedPax / 2000) * 100)) },
+    { label: objectives[1] || "Mantieni puntualità", value: `${stats.onTimePct}%`, pct: Math.min(100, stats.onTimePct) },
+    { label: objectives[2] || "Non andare in rosso", value: eur(state.money), pct: state.money > 0 ? 100 : 0 },
+    { label: objectives[3] || "Proteggi reputazione", value: `${Math.round(state.reputation)}%`, pct: Math.min(100, Math.round(state.reputation)) },
+  ];
 
-function MissionOverlay({ state, stats, onClose }) {
   return (
-    <div className="mission-overlay" onClick={onClose}>
-      <div className="mission-popover" onClick={(e) => e.stopPropagation()}>
-        <button className="mission-popover__close" onClick={onClose} type="button"><X size={16} /></button>
-        <div className="mission-popover__kicker">Obiettivo aeroporto</div>
+    <div className="mission-overlay" role="dialog" aria-modal="true">
+      <div className="mission-dialog">
+        <button className="mission-dialog__close" onClick={onClose} title="Chiudi missione"><X size={16} /></button>
+        <div className="mission-dialog__kicker">Obiettivi aeroporto</div>
         <h2>{state.airportName}</h2>
-        <p>Completa la missione mantenendo il sistema stabile: cassa positiva, reputazione alta, flussi veloci e voli puntuali.</p>
-        <div className="mission-progress-grid">
-          <span><strong>{state.departedPax.toLocaleString("it-IT")}</strong> pax serviti</span>
-          <span><strong>{stats.onTimePct}%</strong> puntualità</span>
-          <span><strong>{Math.round(state.reputation)}%</strong> reputazione</span>
+        <p>Completa gli obiettivi per ottenere stelle e sbloccare il prossimo aeroporto.</p>
+        <div className="mission-progress-list">
+          {progress.map((item) => (
+            <div className="mission-progress" key={item.label}>
+              <div className="mission-progress__top"><span>{item.label}</span><strong>{item.value}</strong></div>
+              <div className="mission-progress__bar"><span style={{ width: `${item.pct}%` }} /></div>
+            </div>
+          ))}
         </div>
-        <div className="mission-list">
-          {state.objectives?.map((objective) => <div key={objective}>◆ {objective}</div>)}
-        </div>
+        <div className="mission-dialog__reward"><CheckCircle2 size={15} /> Ricompensa: nuova rotta e aeroporto successivo</div>
       </div>
     </div>
   );
 }
 
-function KpiHelp({ helpKey }) {
-  if (!helpKey) return null;
-  const help = KPI_HELP[helpKey];
-  if (!help) return null;
-  return (
-    <div className="kpi-help">
-      <strong>{help.title}</strong>
-      <span>{help.body}</span>
-    </div>
-  );
-}
-
 export function LiveOpsScreen({ state, dispatch, onBack }) {
-  const stats = getUiStats(state);
-  const [activeHelp, setActiveHelp] = useState(null);
   const [missionOpen, setMissionOpen] = useState(false);
+  const stats = getUiStats(state);
   const bottleneckTone = state.lastBottleneck === "none" ? "ok" : "warning";
-
-  const toggleHelp = (key) => setActiveHelp((current) => (current === key ? null : key));
 
   return (
     <div className="app-shell" style={{ "--airport-primary": state.airportTheme?.primary, "--airport-secondary": state.airportTheme?.secondary }}>
       <div className="app-bg app-bg--one" />
       <div className="app-bg app-bg--two" />
-      <main className="app app--single-screen">
-        <header className="topbar topbar--v6">
+      <main className="app app--compact">
+        <header className="topbar topbar--compact">
           <div className="topbar__brand-group">
             <button className="back-btn" onClick={onBack} title="Torna alla mappa aeroporti"><ArrowLeft size={16} /></button>
             <div>
               <div className="brand"><Plane size={22} style={{ transform: "rotate(45deg)" }} /> Airport <span>Ops</span></div>
               <div className="subtitle">{state.airportName} · vista operativa live</div>
             </div>
-            <MissionButton state={state} onClick={() => setMissionOpen(true)} />
           </div>
+          <MissionTicker objectives={state.objectives} onOpen={() => setMissionOpen(true)} />
           <div className="topbar__right">
+            {state.upgradeNotice && <TinyTag tone="ok">UPGRADE: {state.upgradeNotice.label.toUpperCase()}</TinyTag>}
             <TinyTag tone={bottleneckTone}>COLLO: {state.lastBottleneck.toUpperCase()}</TinyTag>
             <div className="clock-box">{clock(state.minute)}</div>
             <div className="speed-group">
@@ -122,27 +111,27 @@ export function LiveOpsScreen({ state, dispatch, onBack }) {
 
         <EventBanner event={state.event} />
 
-        <section className="hud-strip hud-strip--v6">
-          <HudPill helpKey="cash" active={activeHelp === "cash"} onClick={toggleHelp} icon={<Coins size={13} />} label="Cassa" value={eur(state.money)} tone={state.money < 8000 ? "danger" : "neutral"} />
-          <HudPill helpKey="reputation" active={activeHelp === "reputation"} onClick={toggleHelp} icon={<Star size={13} />} label="Reputazione" value={`${Math.round(state.reputation)}%`} tone={state.reputation > 60 ? "ok" : state.reputation > 30 ? "warning" : "danger"} />
-          <HudPill helpKey="throughput" active={activeHelp === "throughput"} onClick={toggleHelp} icon={<TrendingUp size={13} />} label="Passeggeri/ora" value={state.throughput.toLocaleString("it-IT")} tone="info" />
-          <HudPill helpKey="wait" active={activeHelp === "wait"} onClick={toggleHelp} icon={<Timer size={13} />} label="Attesa media" value={`${Math.round(state.estWait)} min`} tone={state.estWait > 14 ? "danger" : state.estWait > 8 ? "warning" : "ok"} />
-          <HudPill helpKey="punctuality" active={activeHelp === "punctuality"} onClick={toggleHelp} icon={<Plane size={13} style={{ transform: "rotate(45deg)" }} />} label="Puntualità" value={`${stats.onTimePct}%`} tone={stats.onTimePct >= 75 ? "ok" : "warning"} />
-          <HudPill helpKey="ops" active={activeHelp === "ops"} onClick={toggleHelp} icon={<ShieldAlert size={13} />} label="Operatività" value={`G${state.occCount}/${state.gates} · P${state.runwayLevel}`} tone="neutral" />
+        <section className="hud-strip hud-strip--compact">
+          <HudPill icon={<Coins size={13} />} label="Cassa" value={eur(state.money)} tone={state.money < 8000 ? "danger" : "neutral"} help={KPI_HELP.cash} />
+          <HudPill icon={<Star size={13} />} label="Reputazione" value={`${Math.round(state.reputation)}%`} tone={state.reputation > 60 ? "ok" : state.reputation > 30 ? "warning" : "danger"} help={KPI_HELP.rep} />
+          <HudPill icon={<TrendingUp size={13} />} label="Passeggeri/ora" value={state.throughput.toLocaleString("it-IT")} tone="info" help={KPI_HELP.pax} />
+          <HudPill icon={<Timer size={13} />} label="Attesa media" value={`${Math.round(state.estWait)} min`} tone={state.estWait > 14 ? "danger" : state.estWait > 8 ? "warning" : "ok"} help={KPI_HELP.wait} />
+          <HudPill icon={<Plane size={13} style={{ transform: "rotate(45deg)" }} />} label="Puntualità" value={`${stats.onTimePct}%`} tone={stats.onTimePct >= 75 ? "ok" : "warning"} help={KPI_HELP.punctuality} />
+          <HudPill icon={<Activity size={13} />} label="Operatività" value={`G${state.occCount}/${state.gates} · P${state.runwayLevel}`} tone="neutral" help={KPI_HELP.ops} />
         </section>
-        <KpiHelp helpKey={activeHelp} />
 
-        <InvestmentPanel state={state} score={stats.score} dispatch={dispatch} variant="bar" />
+        <InvestmentPanel state={state} score={stats.score} dispatch={dispatch} compact />
 
-        <section className="ops-layout">
-          <div className="map-card map-card--gameplay map-card--v6">
-            <div className="map-card__head">
-              <div><Activity size={15} color={C.teal} /> Vista operativa</div>
-              <div className="map-card__legend">
-                <span><b className="legend legend--blue" /> pax</span>
+        <section className="play-grid">
+          <div className="map-card map-card--gameplay">
+            <div className="map-card__head map-card__head--compact">
+              <div><Activity size={14} color={C.teal} /> Vista operativa</div>
+              <div className="map-card__legend map-card__legend--chips">
+                <span><b className="legend legend--blue" /> passeggeri</span>
                 <span><b className="legend legend--orange" /> attesa</span>
                 <span><b className="legend legend--red" /> critico</span>
                 <span><b className="legend legend--bag" /> bagagli</span>
+                <span><b className="legend legend--upgrade" /> upgrade</span>
               </div>
             </div>
             <TerminalCanvas state={state} />
@@ -150,12 +139,12 @@ export function LiveOpsScreen({ state, dispatch, onBack }) {
 
           <aside className="ops-side">
             <BottleneckPanel state={state} />
-            <GatePanel state={state} waitingFlights={stats.waitingFlights} compact />
+            <GatePanel state={state} waitingFlights={stats.waitingFlights} />
           </aside>
         </section>
       </main>
 
-      {missionOpen && <MissionOverlay state={state} stats={stats} onClose={() => setMissionOpen(false)} />}
+      {missionOpen && <MissionModal state={state} stats={stats} onClose={() => setMissionOpen(false)} />}
 
       {state.gameOver && (
         <div className="modal-backdrop">

@@ -14,14 +14,29 @@ export function reducer(state, action) {
       return { ...state, speed: action.speed, running: true };
     case "BUY_LANE":
       if (state.money < COSTS.lane || state.lanes >= LIMITS.maxLanes) return state;
-      return { ...state, money: state.money - COSTS.lane, lanes: state.lanes + 1 };
+      return {
+        ...state,
+        money: state.money - COSTS.lane,
+        lanes: state.lanes + 1,
+        upgradeNotice: { type: "security", label: "Nuova corsia security", ttl: 9 },
+      };
     case "BUY_GATE":
       if (state.money < COSTS.gate || state.gates >= LIMITS.maxGates) return state;
-      return { ...state, money: state.money - COSTS.gate, gates: state.gates + 1 };
+      return {
+        ...state,
+        money: state.money - COSTS.gate,
+        gates: state.gates + 1,
+        upgradeNotice: { type: "gate", label: "Nuovo gate aperto", ttl: 9 },
+      };
     case "UPGRADE_RUNWAY": {
       const cost = COSTS.runwayBase * state.runwayLevel;
       if (state.money < cost || state.runwayLevel >= LIMITS.maxRunway) return state;
-      return { ...state, money: state.money - cost, runwayLevel: state.runwayLevel + 1 };
+      return {
+        ...state,
+        money: state.money - cost,
+        runwayLevel: state.runwayLevel + 1,
+        upgradeNotice: { type: "runway", label: "Pista potenziata", ttl: 9 },
+      };
     }
     case "RESET":
       return initialState(state.airportId);

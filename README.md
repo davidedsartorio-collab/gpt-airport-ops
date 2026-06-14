@@ -1,76 +1,17 @@
-# Airport Ops — Visual v2
+# Airport Ops Visual v9
 
-Versione 2D del prototipo Airport Ops.
+V9 pushes the next visual zone after the v8 art-kit pass: Security + Gates.
 
-Questa versione sposta il gioco verso la direzione corretta: non una dashboard statica, ma una **live ops view** dove il giocatore vede passeggeri, code, gate e pista muoversi in tempo reale.
+## Highlights
+- more detailed security checkpoint with queue maze, tray belts, X-ray lanes, officers and pulsing warning state
+- each security upgrade now feels more physical: extra visible lane machinery
+- richer airside lounge with sign, seating islands, shop desk and boards
+- improved gate area with premium gate pods, status displays, boarding lights, seat islands, jet bridges and integrated boarding progress
+- keeps v8 improvements for Arrivals and Bag Drop
+- keeps upgrade cards, bottleneck banner, gate cells, mission ticker and zoom-out airport evolution
 
-## Cosa cambia rispetto alla v1
-
-- Codice separato in moduli:
-  - `src/sim/` = motore simulazione
-  - `src/render/` = rendering Canvas 2D
-  - `src/ui/` = componenti UI
-- Nuovo `TerminalCanvas` con:
-  - terminale schematico 2D
-  - omini/pax animati
-  - coda security visiva
-  - gate visualizzati
-  - pista animata
-  - highlight del bottleneck
-- Nuovo pannello `Ops AI` per indicare il collo di bottiglia principale.
-
-## Avvio
-
+## Run
 ```bash
 npm install
 npm run dev
 ```
-
-Apri l'URL indicato dal terminale, di solito:
-
-```text
-http://localhost:5173
-```
-
-## Struttura
-
-```text
-src/
-  App.jsx
-  main.jsx
-  style.css
-  sim/
-    constants.js
-    initialState.js
-    reducer.js
-    selectors.js
-    tick.js
-  render/
-    TerminalCanvas.jsx
-  ui/
-    BottleneckPanel.jsx
-    ChartPanel.jsx
-    EventBanner.jsx
-    GatePanel.jsx
-    InvestmentPanel.jsx
-    KpiPanel.jsx
-    Panel.jsx
-```
-
-## Prossimo step consigliato
-
-Dopo questa v2, la prossima milestone è trasformare i passeggeri da visualizzazione proporzionale a entità vere nel motore:
-
-```js
-{
-  id,
-  x,
-  y,
-  state,
-  target,
-  flightId,
-  patience
-}
-```
-
-Questo renderà il gameplay più ricco e permetterà pathfinding, priorità, business pax, fast track e aeroporti sbloccabili con layout diversi.

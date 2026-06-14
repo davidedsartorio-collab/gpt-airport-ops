@@ -40,6 +40,8 @@ export function initialState(airportId = "earth-regional", seed) {
     objectives: airport.objectives,
     tuning: airport.tuning,
     stars: 0,
+    upgradeNotice: null,
+    visualMilestone: 1,
     seed: actualSeed,
     rngState: seedFrom(`${airport.id}:${actualSeed}`),
   };

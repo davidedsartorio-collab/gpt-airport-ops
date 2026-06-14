@@ -164,6 +164,9 @@ export function tick(s) {
   }
 
   const lastBottleneck = detectBottleneck({ securityQueue, lanes, clearedPool, flights, gates, runwayLevel, event });
+  const upgradeNotice = s.upgradeNotice
+    ? { ...s.upgradeNotice, ttl: s.upgradeNotice.ttl - 1 }
+    : null;
 
   return {
     ...s,
@@ -192,6 +195,8 @@ export function tick(s) {
     throughput,
     occCount,
     lastBottleneck,
+    upgradeNotice: upgradeNotice && upgradeNotice.ttl > 0 ? upgradeNotice : null,
+    visualMilestone: Math.min(5, 1 + Math.floor(Math.max(0, lanes - 3 + gates - 3 + runwayLevel - 1) / 2)),
     rngState: rng.state(),
   };
 }

@@ -1,24 +1,27 @@
-import { AlertTriangle, Crosshair } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Crosshair } from "lucide-react";
 import { PALETTE as C } from "../sim/constants";
 import { Panel } from "./Panel";
 
 const COPY = {
   none: { title: "Flusso stabile", impact: "Nessun collo critico", action: "Continua a monitorare: la domanda crescerà." },
-  security: { title: "Security satura", impact: "La coda security sta rallentando tutto il terminale", action: "Aggiungi una corsia o preparati a ritardi." },
-  gate: { title: "Gate pieni", impact: "I voli aspettano gate liberi", action: "Compra un nuovo gate o aumenta la capacità di boarding." },
-  runway: { title: "Pista sotto pressione", impact: "Troppi voli pronti, pochi slot pista", action: "Potenzia la pista; con maltempo la capacità cala." },
-  boarding: { title: "Boarding lento", impact: "I passeggeri hanno superato la security, ma i gate non assorbono", action: "Espandi gate o migliora il flusso verso l'imbarco." },
+  security: { title: "Security sotto pressione", impact: "La coda ai controlli sta bloccando il terminale", action: "Aggiungi una corsia security." },
+  gate: { title: "Gate saturi", impact: "I voli aspettano gate liberi", action: "Apri un nuovo gate." },
+  runway: { title: "Pista sotto pressione", impact: "Troppi voli pronti, pochi slot pista", action: "Potenzia la pista." },
+  boarding: { title: "Imbarco lento", impact: "Passeggeri pronti ma boarding lento", action: "Aggiungi gate o migliora gate ops." },
 };
 
 export function BottleneckPanel({ state }) {
   const data = COPY[state.lastBottleneck] || COPY.none;
-  const tone = state.lastBottleneck === "none" ? "ok" : "warning";
+  const ok = state.lastBottleneck === "none";
   return (
-    <Panel title="Ops AI" icon={<Crosshair size={14} color={tone === "ok" ? C.green : C.amber} />} right="detector">
-      <div className={`bottleneck bottleneck--${tone}`}>
-        <div className="bottleneck__title">{tone !== "ok" && <AlertTriangle size={14} />} {data.title}</div>
-        <div className="bottleneck__impact">{data.impact}</div>
-        <div className="bottleneck__action">Azione consigliata: {data.action}</div>
+    <Panel title="Banner collo di bottiglia" icon={<Crosshair size={14} color={ok ? C.green : C.amber} />} right="live">
+      <div className={`bottleneck-banner ${ok ? "bottleneck-banner--ok" : "bottleneck-banner--warning"}`}>
+        <div className="bottleneck-banner__icon">{ok ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}</div>
+        <div className="bottleneck-banner__body">
+          <div className="bottleneck-banner__title">{data.title}</div>
+          <div className="bottleneck-banner__impact">{data.impact}</div>
+        </div>
+        <div className="bottleneck-banner__action">{data.action}</div>
       </div>
     </Panel>
   );
